@@ -1,12 +1,19 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+
 dotenv.config();
+
+
+
 
 const orderRoutes = require('./routes/orderRoutes');
 
 const app = express();
 app.use(express.json());
+
+const cors = require('cors');
+app.use(cors());
 
 app.use('/api/orders', orderRoutes);
 
