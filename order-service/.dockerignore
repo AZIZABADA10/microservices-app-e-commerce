@@ -1,0 +1,10 @@
+# Exclure les dépendances node et les fichiers sensibles
+node_modules
+Dockerfile
+.dockerignore
+.git
+.gitignore
+.env
+dist
+build
+*.log
