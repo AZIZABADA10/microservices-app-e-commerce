@@ -1,5 +1,3 @@
-Voici un exemple de **README.md** professionnel et complet pour votre projet **microservices-app-e-commerce**, rédigé en français. Vous n’avez plus qu’à l’ajouter à la racine de votre dépôt :
-
 ```markdown
 # Microservices App – E‑Commerce
 
