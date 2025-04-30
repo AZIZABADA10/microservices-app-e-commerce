@@ -7,6 +7,16 @@ services:
     ports:
       - "27017:27017"
 
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    container_name: rabbitmq
+    ports:
+      - "15672:15672" # Port pour accéder à l'interface RabbitMQ
+      - "5672:5672"   # Port pour RabbitMQ
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=password
+
   auth-service:
     build: ./auth-service
     ports:
@@ -14,8 +24,10 @@ services:
     environment:
       - MONGO_URI=mongodb://mongodb:27017/auth-service
       - JWT_SECRET=secret_token
+      - RABBITMQ_URL=amqp://admin:password@rabbitmq:5672
     depends_on:
       - mongodb
+      - rabbitmq
 
   product-service:
     build: ./product-service
@@ -23,8 +35,10 @@ services:
       - "5002:5002"
     environment:
       - MONGO_URI=mongodb://mongodb:27017/product-service
+      - RABBITMQ_URL=amqp://admin:password@rabbitmq:5672
     depends_on:
       - mongodb
+      - rabbitmq
 
   order-service:
     build: ./order-service
@@ -32,10 +46,10 @@ services:
       - "5003:5003"
     environment:
       - MONGO_URI=mongodb://mongodb:27017/order-service
-      - PRODUCT_SERVICE_URL=http://product-service:5002/api/products
+      - RABBITMQ_URL=amqp://admin:password@rabbitmq:5672
     depends_on:
       - mongodb
-      - product-service
+      - rabbitmq
 
   frontend:
     build: ./frontend

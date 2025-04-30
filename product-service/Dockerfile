@@ -1,15 +1,16 @@
+FROM node:18
 
-FROM node:18-alpine
-
+# Crée le dossier de travail dans le conteneur
 WORKDIR /app
 
-# Étape 1: Copier les fichiers de dépendances
+# Copie les fichiers package.json et package-lock.json
 COPY package*.json ./
 
-# Étape 2: Installer les dépendances
-RUN npm install --production
+# Installation des dépendances
+RUN npm install
 
-# Étape 3: Copier le reste du code
+# Copie tout le reste du projet
 COPY . .
 
-CMD ["npm", "start"]
+
+CMD ["node", "src/index.js"]

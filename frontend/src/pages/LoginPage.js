@@ -3,14 +3,14 @@ import { login } from '../api/api';
 import { useNavigate } from 'react-router-dom';
 
 function LoginPage() {
-  const [form, setForm] = useState({ username: '', password: '' });
-  const navigate = useNavigate(); 
+  const [form, setForm] = useState({ email: '', password: '' }); // Changed username to email
+  const navigate = useNavigate();
   const handleLogin = async () => {
     try {
       const res = await login(form);
       localStorage.setItem('token', res.data.token);
       alert('Connexion réussie');
-      navigate('/'); 
+      navigate('/');
     } catch (err) {
       alert('Erreur : ' + (err.response?.data?.message || err.message));
     }
@@ -19,13 +19,13 @@ function LoginPage() {
   return (
     <div>
       <h2>Connexion</h2>
-      <label>Nom d'utilisateur : </label>
+      <label>Adresse Email : </label> {/* Changed Username to Email */}
 
       <input
-        placeholder="Username"
-        onChange={(e) => setForm({ ...form, username: e.target.value })}
+        placeholder="Email" // Changed Username to Email
+        onChange={(e) => setForm({ ...form, email: e.target.value })} // Changed username to email
       /><br />
-            <label>Mot de passe : </label>
+      <label>Mot de passe : </label>
       <input
         type="password"
         placeholder="Password"
