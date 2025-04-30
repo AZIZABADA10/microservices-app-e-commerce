@@ -1,18 +1,33 @@
-const Order = require('../models/Order');
-const { checkProductExists } = require('../services/productService');
+const Order = require('../models/order.model');
+const { publishOrderCreated } = require('../rabbitmq'); // Import de la fonction pour publier un message
 
 // POST /orders
 exports.createOrder = async (req, res) => {
-  const { productId, quantity } = req.body;
   try {
-    const product = await checkProductExists(productId);
-    if (!product) return res.status(404).json({ message: 'Produit introuvable' });
+    const { userId, products, totalAmount } = req.body;
 
-    const order = new Order({ productId, quantity });
-    await order.save();
-    res.status(201).json(order);
+    // Validation des données
+    if (!userId || !products || !totalAmount) {
+      return res.status(400).json({ message: 'Tous les champs sont requis.' });
+    }
+
+    // Création de la commande
+    const newOrder = new Order({
+      userId,
+      products,
+      totalAmount,
+      status: 'pending'
+    });
+
+    const savedOrder = await newOrder.save();
+
+    // Publier un message dans RabbitMQ
+    publishOrderCreated(savedOrder);
+
+    res.status(201).json(savedOrder);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error('Erreur lors de la création de la commande:', err);
+    res.status(500).json({ message: 'Erreur serveur.' });
   }
 };
 

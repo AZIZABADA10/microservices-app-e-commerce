@@ -1,5 +1,5 @@
-// src/rabbitmq.js
 const amqp = require('amqplib');
+const Product = require('./models/Product'); // Import du modèle Product
 
 let channel;
 
@@ -9,23 +9,26 @@ async function connectRabbitMQ() {
     channel = await connection.createChannel();
     console.log('✅ [product-service] Connecté à RabbitMQ');
 
-    // Déclare la queue 'USER_REGISTERED' pour l'écoute
-    await channel.assertQueue('USER_REGISTERED');
-    console.log("✅ [product-service] File 'USER_REGISTERED' est prête à recevoir des messages");
+    // Déclare la queue 'PRODUCT_ADDED' pour l'écoute
+    await channel.assertQueue('PRODUCT_ADDED');
+    console.log("✅ [product-service] File 'PRODUCT_ADDED' est prête à recevoir des messages");
 
     // Consommer les messages de la file
-    channel.consume('USER_REGISTERED', (msg) => {
+    channel.consume('PRODUCT_ADDED', async (msg) => {
       if (msg !== null) {
         try {
-          const user = JSON.parse(msg.content.toString());
-          console.log('📥 [product-service] Message reçu:', user);
+          const productData = JSON.parse(msg.content.toString());
+          console.log('📥 [product-service] Message reçu:', productData);
 
-          // Ajoutez ici la logique métier (par exemple, ajouter un produit de bienvenue)
+          // Ajouter le produit dans la base de données
+          const newProduct = new Product(productData);
+          await newProduct.save();
+          console.log('✅ [product-service] Produit ajouté avec succès:', newProduct);
 
           // Confirmer la réception du message
           channel.ack(msg);
         } catch (err) {
-          console.error('❌ Erreur lors du traitement du message:', err);
+          console.error('❌ [product-service] Erreur lors du traitement du message:', err);
         }
       }
     });

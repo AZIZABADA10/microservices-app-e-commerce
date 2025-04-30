@@ -1,6 +1,6 @@
 // src/rabbitmq.js
 const amqp = require('amqplib');
-const Order = require('./models/order.model.js'); // Import du modèle Order
+const Order = require('./models/order.model'); // Import du modèle Order
 
 let channel;
 
@@ -10,44 +10,43 @@ async function connectRabbitMQ() {
     channel = await connection.createChannel();
     console.log('✅ [order-service] Connecté à RabbitMQ');
 
-    // Déclare la queue 'USER_REGISTERED' pour l'écoute
-    await channel.assertQueue('USER_REGISTERED');
-    console.log("✅ [order-service] File 'USER_REGISTERED' prête à recevoir des messages");
+    // Déclare la queue 'ORDER_CREATED' pour l'écoute
+    await channel.assertQueue('ORDER_CREATED');
+    console.log("✅ [order-service] File 'ORDER_CREATED' est prête à recevoir des messages");
 
     // Consommer les messages de la file
-    channel.consume('USER_REGISTERED', async (msg) => {
+    channel.consume('ORDER_CREATED', async (msg) => {
       if (msg !== null) {
-        const user = JSON.parse(msg.content.toString());
-        console.log('📥 [order-service] Message reçu:', user);
+        try {
+          const orderData = JSON.parse(msg.content.toString());
+          console.log('📥 [order-service] Message reçu:', orderData);
 
-        // Créer une commande pour l'utilisateur
-        await createWelcomeOrder(user);
+          // Ajouter la commande dans la base de données
+          const newOrder = new Order(orderData);
+          await newOrder.save();
+          console.log('✅ [order-service] Commande ajoutée avec succès:', newOrder);
 
-        // Confirmer la réception du message
-        channel.ack(msg);
+          // Confirmer la réception du message
+          channel.ack(msg);
+        } catch (err) {
+          console.error('❌ [order-service] Erreur lors du traitement du message:', err);
+        }
       }
     });
   } catch (err) {
     console.error('❌ [order-service] RabbitMQ connection error:', err);
+    setTimeout(connectRabbitMQ, 5000); // Reconnexion après 5 secondes
   }
 }
 
-// Fonction pour créer une commande pour un utilisateur nouvellement enregistré
-async function createWelcomeOrder(user) {
-  try {
-    // Crée une commande avec un produit par défaut (exemple ici avec un produit fictif)
-    const newOrder = new Order({
-      productId: 'default-product-id', // Remplace par un ID de produit réel
-      quantity: 1,
-      status: 'en attente'
-    });
-
-    // Sauvegarde la commande dans la base de données
-    await newOrder.save();
-    console.log(`📦 [order-service] Commande créée pour l'utilisateur ${user.email}:`, newOrder);
-  } catch (error) {
-    console.error('❌ [order-service] Erreur lors de la création de la commande:', error);
+function publishOrderCreated(order) {
+  if (!channel) {
+    console.error('❌ [order-service] RabbitMQ channel not initialized.');
+    return;
   }
+
+  channel.sendToQueue('ORDER_CREATED', Buffer.from(JSON.stringify(order)));
+  console.log('📤 [order-service] Message envoyé à ORDER_CREATED:', order);
 }
 
-module.exports = { connectRabbitMQ };
+module.exports = { connectRabbitMQ, publishOrderCreated };
