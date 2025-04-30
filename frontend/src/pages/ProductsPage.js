@@ -3,6 +3,7 @@ import { getProducts } from '../api/api';
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -11,6 +12,7 @@ const ProductsPage = () => {
         setProducts(response.data);
       } catch (err) {
         console.error('Erreur lors de la récupération des produits:', err);
+        setError('Impossible de récupérer les produits.');
       }
     };
 
@@ -20,15 +22,15 @@ const ProductsPage = () => {
   return (
     <div>
       <h1>Liste des produits</h1>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       {products.length === 0 ? (
         <p>Aucun produit disponible.</p>
       ) : (
         <ul>
           {products.map((product) => (
             <li key={product._id}>
-              <p>ID : {product._id}</p>
-              <p>NOM : {product.name}</p>
-              <p>DESCRIPTION : {product.description}</p>
+              <h2>{product.name}</h2>
+              <p>{product.description}</p>
               <p>Prix : {product.price} €</p>
               <p>Quantité en stock : {product.stockQuantity}</p>
             </li>
@@ -40,3 +42,4 @@ const ProductsPage = () => {
 };
 
 export default ProductsPage;
+
