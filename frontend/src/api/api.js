@@ -14,6 +14,12 @@ export const createProduct = (data, token) =>
     headers: { Authorization: `Bearer ${token}` }
   });
 
+export const updateProduct = (id, data) =>
+  axios.put(`http://localhost:5002/api/products/${id}`, data);
+
+export const deleteProduct = (id) =>
+  axios.delete(`http://localhost:5002/api/products/${id}`);
+
 export const getOrders = () =>
   axios.get('http://localhost:5003/api/orders');
 
@@ -21,3 +27,9 @@ export const createOrder = (data, token) =>
   axios.post('http://localhost:5003/api/orders', data, {
     headers: { Authorization: `Bearer ${token}` }
   });
+
+export const updateOrder = (id, data) =>
+  axios.put(`http://localhost:5003/api/orders/${id}`, data);
+
+export const deleteOrder = (id) =>
+  axios.delete(`http://localhost:5003/api/orders/${id}`);

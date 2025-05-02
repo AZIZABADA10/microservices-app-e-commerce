@@ -14,6 +14,7 @@ function Navbar() {
     <nav style={{ marginBottom: '20px' }}>
       <Link to="/" style={{ marginRight: '10px' }}>Produits</Link>
       <Link to="/orders" style={{ marginRight: '10px' }}>Commandes</Link>
+      <Link to="/manage-products" style={{ marginRight: '10px' }}>Gérer les Produits</Link>
       {!isLoggedIn ? (
         <>
           <Link to="/login" style={{ marginRight: '10px' }}>Connexion</Link>

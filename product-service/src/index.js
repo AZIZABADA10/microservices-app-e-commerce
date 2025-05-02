@@ -3,7 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors'); // Import du middleware CORS
 const { connectRabbitMQ } = require('./rabbitmq');
-const productRoutes = require('./routes/productRoutes');
+const productRoutes = require('./Routes/productRoutes');
 const app = express();
 
 // Middleware
