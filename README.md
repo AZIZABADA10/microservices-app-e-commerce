@@ -57,7 +57,7 @@ app-network ──┬─ auth-service (Express, port 5001)
    ```
 4. Accédez au front‑end : [http://localhost:3000](http://localhost:3000)
 
-## 📚 Endpoints Principaux
+## Endpoints Principaux
 
 ### Auth‑service (port 5001)
 
