@@ -121,5 +121,5 @@ Chaque service possède sa propre base de données MongoDB et communique en REST
 ## Auteur
 
 **AZIZ ABADA**
-Étudiant Full‑Stack & Cloud‑Native
+Étudiant Web-Full‑Stack
 github.com/AZIZABADA10
