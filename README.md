@@ -1,16 +1,31 @@
 # E‑commerce Microservices Application
 
-## Présentation 
 
-Cette application e‑commerce en microservices est un projet académique visant à démontrer la conception et le déploiement d’une plateforme cloud-native. Chaque service (authentification, produits, commandes, frontend) fonctionne de manière autonome dans des conteneurs Docker, facilitant la scalabilité et la maintenabilité.
+## Description
+
+**E‑commerce Microservices Application** est un projet académique développé dans le cadre du module M214 « Créer une application cloud native » à l’ISTA NTIC Safi. Il illustre une architecture microservices conteneurisée, déployée avec Docker Compose, et met en œuvre les bonnes pratiques cloud‑native (12‑factor apps, CI/CD, isolation des services).
+
+## Table des matières
+
+* [Fonctionnalités](#fonctionnalités)
+* [Architecture](#architecture)
+* [Stack Technique](#stack-technique)
+* [Prérequis](#prérequis)
+* [Installation & Exécution](#installation--exécution)
+* [Variables d’environnement](#variables-denvironnement)
+* [Endpoints API](#endpoints-api)
+* [Docker](#docker)
+* [Contribuer](#contribuer)
+* [Auteur](#auteur)
 
 ## Fonctionnalités
 
-* **Authentification & autorisation** : inscription / connexion via JWT, protection des routes.
-* **Catalogue produits** : CRUD complet (création, lecture, mise à jour, suppression) des produits.
-* **Gestion des commandes** : création et consultation des commandes, vérification de stock inter‑service.
-* **Front‑end React** : interface responsive (Login, Catalogue, Mes commandes, Gestion produits).
-* **Conteneurisation & déploiement** : Docker Compose orchestre tous les services.
+* **Authentification & autorisation** : inscription et connexion sécurisées (JWT, bcrypt).
+* **Catalogue produits** : opérations CRUD sur les produits.
+* **Gestion des commandes** : création, consultation, et vérification de stock inter‑service.
+* **Frontend React** : interface responsive (Login, Catalogue, Panier, Mes commandes, Gestion produits).
+* **Messaging** : communication asynchrone via RabbitMQ pour les événements critiques.
+* **Conteneurisation** : isolation des services avec Docker Compose.
 
 ## Architecture
 
@@ -19,13 +34,13 @@ app-network ──┬─ auth-service (Express, port 5001)
               ├─ product-service (Express, port 5002)
               ├─ order-service (Express, port 5003)
               ├─ frontend (React, port 3000)
-              └─ mongodb (port 27017)
+              ├─ mongodb (port 27017)
+              └─ rabbitmq (port 5672)
 ```
 
-* Chaque service dispose de sa propre base de données MongoDB.
-* Communication via API REST et file d’attente RabbitMQ pour les événements critiques.
+Chaque service possède sa propre base de données MongoDB et communique en REST et via RabbitMQ.
 
-##  Stack Technique
+## Stack Technique
 
 | Composant        | Technologie            |
 | ---------------- | ---------------------- |
@@ -33,31 +48,47 @@ app-network ──┬─ auth-service (Express, port 5001)
 | Base de données  | MongoDB                |
 | Auth & sécurité  | JWT, bcrypt            |
 | Front‑end        | React.js, Bootstrap    |
+| Messaging        | RabbitMQ               |
 | Conteneurisation | Docker, Docker Compose |
-| Hébergement demo | AWS EC2                |
 
-##  Prérequis
+## Prérequis
 
 * Docker & Docker Compose
 * Node.js (v18+) et npm
 
-## Installation et exécution locale
+## Installation & Exécution
 
-1. Clonez le dépôt :
+1. Clonez le dépôt :
 
    ```bash
    git clone https://github.com/AZIZABADA10/microservices-app-e-commerce.git
    cd microservices-app-e-commerce
    ```
-2. Créez un fichier `.env` pour chaque service (ex. `auth-service/.env`) à partir des exemples `.env.example` : définissez les variables MONGODB\_URI, JWT\_SECRET, RABBITMQ\_URL, etc.
-3. Démarrez l’ensemble avec Docker Compose :
+2. Dupliquez les fichiers d’exemple d’environnement pour chaque service :
 
    ```bash
-   docker-compose up --build
+   cp auth-service/.env.example auth-service/.env
+   cp product-service/.env.example product-service/.env
+   cp order-service/.env.example order-service/.env
    ```
-4. Accédez au front‑end : [http://localhost:3000](http://localhost:3000)
+3. Éditez chaque `.env` pour configurer : `MONGODB_URI`, `JWT_SECRET`, `RABBITMQ_URL`, etc.
+4. Démarrez tous les services :
 
-## Endpoints Principaux
+   ```bash
+   docker-compose up --build -d
+   ```
+5. Ouvrez votre navigateur : [http://localhost:3000](http://localhost:3000)
+
+## Variables d’environnement
+
+| Variable      | Service            | Description                         |
+| ------------- | ------------------ | ----------------------------------- |
+| MONGODB\_URI  | auth,product,order | URI de connexion MongoDB            |
+| JWT\_SECRET   | auth-service       | Clé secrète pour signature JWT      |
+| RABBITMQ\_URL | auth,product,order | URL de connexion RabbitMQ           |
+| PORT          | chaque service     | Port d’écoute du service (ex. 5001) |
+
+## Endpoints API
 
 ### Auth‑service (port 5001)
 
@@ -70,7 +101,7 @@ app-network ──┬─ auth-service (Express, port 5001)
 
 | Route               | Méthode | Description                    |
 | ------------------- | ------- | ------------------------------ |
-| `/api/products`     | GET     | Liste tous les produits        |
+| `/api/products`     | GET     | Récupère tous les produits     |
 | `/api/products`     | POST    | Crée un nouveau produit        |
 | `/api/products/:id` | PUT     | Met à jour un produit existant |
 | `/api/products/:id` | DELETE  | Supprime un produit            |
@@ -79,14 +110,19 @@ app-network ──┬─ auth-service (Express, port 5001)
 
 | Route         | Méthode | Description                      |
 | ------------- | ------- | -------------------------------- |
-| `/api/orders` | GET     | Liste toutes les commandes       |
+| `/api/orders` | GET     | Récupère toutes les commandes    |
 | `/api/orders` | POST    | Crée une commande (vérif. stock) |
 
-##  Docker
+## Docker
 
-* Le fichier `docker-compose.yml` orchestre 6 services (frontend, auth, product, order, mongodb,RabbitMQ).
-* Volumes persistants pour MongoDB.
+* `docker-compose.yml` orchestre tous les services et dépendances (MongoDB, RabbitMQ).
+* Les volumes garantissent la persistance des données.
 * Réseau interne `app-network` pour communication sécurisée.
 
 
-*Développé par AZIZ ABADA – Étudiant WEB Full‑Stack*
+
+## Auteur
+
+**AZIZ ABADA**
+Étudiant Full‑Stack & Cloud‑Native
+github.com/AZIZABADA10
