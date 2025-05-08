@@ -1,168 +1,92 @@
-```markdown
-# Microservices App – E‑Commerce
+# E‑commerce Microservices Application
 
-Une application e‑commerce pédagogique construite sur une architecture **microservices** avec :  
-- Un **frontend** React  
-- Trois **backends** Node.js/Express  
-  - auth-service (authentification, JWT)  
-  - product-service (gestion des produits)  
-  - order-service (gestion des commandes)  
-- Une base de données **MongoDB**  
-- Orchestration via **Docker Compose**
+## Présentation 
 
----
+Cette application e‑commerce modulaire Elle illustre une architecture microservices déployée en conteneurs Docker, offrant une plateforme de vente en ligne sécurisée, scalable et facile à maintenir.
 
-## Table des matières
+## Fonctionnalités
 
-1. [Architecture](#architecture)  
-2. [Fonctionnalités](#fonctionnalités)  
-3. [Prérequis](#prérequis)  
-4. [Installation & configuration](#installation--configuration)  
-5. [Démarrage des services](#démarrage-des-services)  
-6. [API Endpoints](#api-endpoints)  
-7. [Structure du projet](#structure-du-projet)  
-8. [Tests](#tests)  
-9. [Contribuer](#contribuer)  
-10. [Auteur](#auteur)  
-11. [Licence](#licence)  
-
----
+* **Authentification & autorisation** : inscription / connexion via JWT, protection des routes.
+* **Catalogue produits** : CRUD complet (création, lecture, mise à jour, suppression) des produits.
+* **Gestion des commandes** : création et consultation des commandes, vérification de stock inter‑service.
+* **Front‑end React** : interface responsive (Login, Catalogue, Mes commandes, Gestion produits).
+* **Conteneurisation & déploiement** : Docker Compose orchestre tous les services.
 
 ## Architecture
 
 ```text
-+-------------+      +----------------+     +----------------+     +-------------+
-|             |      |                |     |                |     |             |
-| Frontend    | <--> | auth-service   |     | product-service|     | order-service
-|  React      |      | (port 5001)    |     | (port 5002)    |     | (port 5003) |
-|  port 3000  |      +----------------+     +----------------+     +-------------+
-|             |
-+------+------+                                                       +-------------+
-       |                                                              |             |
-       |                                                              | MongoDB     |
-       +--------------------------------------------------------------> port 27017  |
-                                                                      +-------------+
+app-network ──┬─ auth-service (Express, port 5001)
+              ├─ product-service (Express, port 5002)
+              ├─ order-service (Express, port 5003)
+              ├─ frontend (React, port 3000)
+              └─ mongodb (port 27017)
 ```
 
-Chaque service est isolé dans son propre conteneur Docker et communique via HTTP et la base MongoDB partagée.
+* Chaque service dispose de sa propre base de données MongoDB.
+* Communication via API REST et file d’attente RabbitMQ pour les événements critiques.
 
----
+##  Stack Technique
 
-## Fonctionnalités
+| Composant        | Technologie            |
+| ---------------- | ---------------------- |
+| Backend services | Node.js, Express       |
+| Base de données  | MongoDB                |
+| Auth & sécurité  | JWT, bcrypt            |
+| Front‑end        | React.js, Bootstrap    |
+| Conteneurisation | Docker, Docker Compose |
+| Hébergement demo | AWS EC2                |
 
-- **auth-service**  
-  - Inscription (`POST /api/auth/register`)  
-  - Connexion (`POST /api/auth/login`)  
-  - Génération et validation de JWT  
+##  Prérequis
 
-- **product-service**  
-  - CRUD produits (`GET/POST/PUT/DELETE /api/products`)  
+* Docker & Docker Compose
+* Node.js (v18+) et npm
 
-- **order-service**  
-  - Création de commande (`POST /api/orders`)  
-  - Consultation des commandes (`GET /api/orders`)  
-  - Vérification automatique des produits via product-service  
+## Installation et exécution locale
 
-- **Frontend React**  
-  - Formulaires d’inscription et de connexion  
-  - Affichage du catalogue de produits  
-  - Passage de commandes  
-  - Historique des commandes  
-  - Gestion du token utilisateur et déconnexion  
+1. Clonez le dépôt :
 
----
-
-## Prérequis
-
-- Docker (version ≥ 20.10)  
-- Docker Compose (version ≥ 1.27)  
-- Node.js & npm (pour exécuter en local hors Docker, optionnel)  
-
----
-
-## Installation & configuration
-
-1. **Cloner** le dépôt :  
    ```bash
    git clone https://github.com/AZIZABADA10/microservices-app-e-commerce.git
    cd microservices-app-e-commerce
    ```
+2. Créez un fichier `.env` pour chaque service (ex. `auth-service/.env`) à partir des exemples `.env.example` : définissez les variables MONGODB\_URI, JWT\_SECRET, RABBITMQ\_URL, etc.
+3. Démarrez l’ensemble avec Docker Compose :
 
-2. **Variables d’environnement**  
-   Renommez les fichiers `.env.example` (à créer dans chaque service) en `.env` et ajustez :
-   - `MONGO_URI` (ex. `mongodb://mongodb:27017/<nom_du_service>`)
-   - `JWT_SECRET` (pour auth-service)
-   - `PRODUCT_SERVICE_URL` (dans order-service, ex. `http://product-service:5002/api/products`)
-
-3. **(Optionnel) Installation manuelle**  
-   Dans chaque dossier de service (`auth-service`, `product-service`, `order-service`) et dans `frontend` :  
    ```bash
-   npm install
+   docker-compose up --build
    ```
+4. Accédez au front‑end : [http://localhost:3000](http://localhost:3000)
 
----
+## 📚 Endpoints Principaux
 
-## Démarrage des services
+### Auth‑service (port 5001)
 
-### Avec Docker Compose
+| Route                | Méthode | Description                   |
+| -------------------- | ------- | ----------------------------- |
+| `/api/auth/register` | POST    | Inscription utilisateur       |
+| `/api/auth/login`    | POST    | Connexion et obtention du JWT |
 
-```bash
-docker-compose up --build
-```
+### Product‑service (port 5002)
 
-- **Frontend** : http://localhost:3000  
-- **auth-service** : http://localhost:5001  
-- **product-service** : http://localhost:5002  
-- **order-service** : http://localhost:5003  
-- **MongoDB** : port 27017  
+| Route               | Méthode | Description                    |
+| ------------------- | ------- | ------------------------------ |
+| `/api/products`     | GET     | Liste tous les produits        |
+| `/api/products`     | POST    | Crée un nouveau produit        |
+| `/api/products/:id` | PUT     | Met à jour un produit existant |
+| `/api/products/:id` | DELETE  | Supprime un produit            |
 
-### Sans Docker (pour le dev)
+### Order‑service (port 5003)
 
-Dans chaque dossier, lancez :
-```bash
-npm run dev
-```
+| Route         | Méthode | Description                      |
+| ------------- | ------- | -------------------------------- |
+| `/api/orders` | GET     | Liste toutes les commandes       |
+| `/api/orders` | POST    | Crée une commande (vérif. stock) |
 
----
+##  Docker
 
-## API Endpoints
-
-| Service          | Méthode | Route                         | Description                         |
-|------------------|---------|-------------------------------|-------------------------------------|
-| auth-service     | POST    | `/api/auth/register`          | Enregistrement utilisateur          |
-| auth-service     | POST    | `/api/auth/login`             | Authentification (JWT)              |
-| product-service  | GET     | `/api/products`               | Récupérer tous les produits         |
-| product-service  | GET     | `/api/products/:id`           | Récupérer un produit par ID         |
-| product-service  | POST    | `/api/products`               | Créer un nouveau produit            |
-| product-service  | PUT     | `/api/products/:id`           | Mettre à jour un produit            |
-| product-service  | DELETE  | `/api/products/:id`           | Supprimer un produit                |
-| order-service    | POST    | `/api/orders`                 | Passer une nouvelle commande        |
-| order-service    | GET     | `/api/orders`                 | Lister les commandes de l’utilisateur |
-
-Vous pouvez tester rapidement via Postman ou cURL une fois les conteneurs démarrés.
-
----
-
-## Structure du projet
-
-```text
-microservices-app-ecommerce/
-├── auth-service/         # Backend Auth (Express + Mongoose)
-├── product-service/      # Backend Products (Express + Mongoose)
-├── order-service/        # Backend Orders (Express + Mongoose)
-├── frontend/             # Frontend React
-├── docker-compose.yml    # Orchestration des conteneurs
-└── README.md             # Ce fichier
-```
-
-Chaque service contient son propre `package.json`, ses routes, ses modèles Mongoose et une configuration Dockerfile.
+* Le fichier `docker-compose.yml` orchestre 6 services (frontend, auth, product, order, mongodb,RabbitMQ).
+* Volumes persistants pour MongoDB.
+* Réseau interne `app-network` pour communication sécurisée.
 
 
----
-
-## Auteur
-
-**AZIZ ABADA**  
-- GitHub : [AZIZABADA10](https://github.com/AZIZABADA10)
-
----
+*Développé par AZIZ ABADA – Étudiant WEB Full‑Stack*
