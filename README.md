@@ -1,9 +1,6 @@
-# E‑commerce Microservices Application
-
-
+**E‑commerce Microservices Application** 
 ## Description
-
-**E‑commerce Microservices Application** est un projet académique développé dans le cadre du module M214 « Créer une application cloud native » à l’ISTA NTIC Safi. Il illustre une architecture microservices conteneurisée, déployée avec Docker Compose, et met en œuvre les bonnes pratiques cloud‑native (12‑factor apps, CI/CD, isolation des services).
+Cette application e‑commerce en microservices est un projet académique visant à démontrer la conception et le déploiement d’une plateforme cloud-native. Chaque service (authentification, produits, commandes, frontend) fonctionne de manière autonome dans des conteneurs Docker, facilitant la scalabilité et la maintenabilité.
 
 ## Table des matières
 
