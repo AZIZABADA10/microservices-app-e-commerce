@@ -1,4 +1,4 @@
-**E‑commerce Microservices Application** 
+## E‑commerce Microservices Application 
 ## Description
 Cette application e‑commerce en microservices est un projet académique visant à démontrer la conception et le déploiement d’une plateforme cloud-native. Chaque service (authentification, produits, commandes, frontend) fonctionne de manière autonome dans des conteneurs Docker, facilitant la scalabilité et la maintenabilité.
 
