@@ -38,7 +38,7 @@ const ManageProductsPage = () => {
         await updateProduct(editingProductId, formData, true);
         toast.success('Produit mis à jour avec succès');
       } else {
-        await createProduct(formData, true);
+        await createProduct(formData); // Correct
         toast.success('Produit créé avec succès');
       }
 

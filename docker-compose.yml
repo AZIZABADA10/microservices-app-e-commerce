@@ -3,13 +3,13 @@ version: '3.8'
 services:
   mongodb:
     image: mongo
-    container_name: mongodb
+    container_name: mongodb2
     ports:
       - "27017:27017"
 
   rabbitmq:
     image: "rabbitmq:3-management"
-    container_name: rabbitmq
+    container_name: rabbitmq2
     ports:
       - "15672:15672" # Port pour accéder à l'interface RabbitMQ
       - "5672:5672"   # Port pour RabbitMQ

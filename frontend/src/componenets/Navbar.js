@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import '../pages/HomePage.css'; 
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -19,7 +19,7 @@ function Navbar() {
     <nav className="navbar navbar-expand-lg navbar-light modern-navbar shadow-sm mb-4 fixed-top">
       <div className="container">
         <Link className="navbar-brand fw-bold text-primary fs-3" to="/">
-          <i className="bi bi-capsule-pill me-2"></i>ParaPharma
+          <i className="bi bi-cart3 me-2"></i>E-commerce
         </Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span className="navbar-toggler-icon"></span>

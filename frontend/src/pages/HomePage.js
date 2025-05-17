@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getProducts } from '../api/api';
-import './HomePage.css'; // Crée ce fichier pour le style custom
+import './HomePage.css'; 
 
 const initialReviews = [
-  { name: "Sami", comment: "Super service et livraison rapide !", date: "2025-05-15", rating: 5 },
-  { name: "Nadia", comment: "Produits de qualité, je recommande.", date: "2025-05-14", rating: 4 },
-  { name: "Youssef", comment: "Bon rapport qualité/prix.", date: "2025-05-13", rating: 4 }
+  { name: "Aziz", comment: "Super service et livraison rapide !", date: "2025-05-15", rating: 5 },
+  { name: "Younes", comment: "Produits de qualité, je recommande.", date: "2025-05-14", rating: 4 },
+  { name: "Ismail", comment: "Bon rapport qualité/prix.", date: "2025-05-13", rating: 4 },
+  { name: "Mohamed", comment: "Bon qualité.", date: "2025-05-14", rating: 3 }
+
 ];
 
 const HomePage = () => {
@@ -48,15 +50,15 @@ const HomePage = () => {
       <section className="container py-5">
         <div className="row align-items-center">
           <div className="col-md-6 mb-4 mb-md-0">
-            <img src="/logo512.png" alt="ParaPharma" className="img-fluid rounded-4 shadow" style={{maxWidth: 320}} />
+            <img src="../public/logoSysteme.png" alt="ParaPharma" className="img-fluid rounded-4 shadow" style={{maxWidth: 320}} />
           </div>
           <div className="col-md-6">
-            <h1 className="fw-bold text-primary mb-3">Bienvenue chez ParaPharma</h1>
+            <h1 className="fw-bold text-primary mb-3">Bienvenue chez Mon site web e-commerce</h1>
             <p className="lead">
-              ParaPharma est votre partenaire de confiance pour tous vos besoins en parapharmacie. Nous proposons une large gamme de produits certifiés, une livraison rapide partout au Maroc et un service client à votre écoute 7j/7.
+              NonEntreprise est votre partenaire de confiance pour tous vos besoins . Nous proposons une large gamme de produits certifiés, une livraison rapide partout au Maroc et un service client à votre écoute 7j/7.
             </p>
             <p>
-              Notre mission : vous offrir le meilleur de la santé et du bien-être, au meilleur prix.
+              Notre mission : vous offrir le meilleur, au meilleur prix.
             </p>
           </div>
         </div>
