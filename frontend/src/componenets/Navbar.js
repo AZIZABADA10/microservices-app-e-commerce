@@ -1,8 +1,9 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -11,26 +12,42 @@ function Navbar() {
 
   const isLoggedIn = !!localStorage.getItem('token');
 
+  // Pour le lien actif
+  const isActive = (path) => location.pathname === path;
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm mb-4">
+    <nav className="navbar navbar-expand-lg navbar-light modern-navbar shadow-sm mb-4 fixed-top">
       <div className="container">
-        <Link className="navbar-brand fw-bold text-primary" to="/">ParaPharma</Link>
+        <Link className="navbar-brand fw-bold text-primary fs-3" to="/">
+          <i className="bi bi-capsule-pill me-2"></i>ParaPharma
+        </Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav me-auto">
+          <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <Link className="nav-link" to="/">Produits</Link>
+              <Link className={`nav-link${isActive('/') ? ' active' : ''}`} to="/">
+                <i className="bi bi-house-door me-1"></i>Accueil
+              </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/orders">Commandes</Link>
+              <Link className={`nav-link${isActive('/Products') ? ' active' : ''}`} to="/Products">
+                <i className="bi bi-bag me-1"></i>Produits
+              </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/manage-products">Gérer les Produits</Link>
+              <Link className={`nav-link${isActive('/orders') ? ' active' : ''}`} to="/orders">
+                <i className="bi bi-card-checklist me-1"></i>Commandes
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link className={`nav-link${isActive('/manage-products') ? ' active' : ''}`} to="/manage-products">
+                <i className="bi bi-gear me-1"></i>Gérer les Produits
+              </Link>
             </li>
           </ul>
-          <div className="d-flex">
+          <div className="d-flex ms-lg-3 mt-3 mt-lg-0">
             {!isLoggedIn ? (
               <>
                 <Link to="/login" className="btn btn-outline-primary me-2">Connexion</Link>

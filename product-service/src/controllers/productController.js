@@ -26,7 +26,12 @@ exports.getProductById = async (req, res) => {
 // POST /products
 exports.createProduct = async (req, res) => {
   try {
-    const newProduct = new Product(req.body);
+    const images = req.files ? req.files.map(file => `/uploads/${file.filename}`) : [];
+    const productData = {
+      ...req.body,
+      images,
+    };
+    const newProduct = new Product(productData);
     const saved = await newProduct.save();
     res.status(201).json(saved);
   } catch (err) {
@@ -38,7 +43,16 @@ exports.createProduct = async (req, res) => {
 // PUT /products/:id
 exports.updateProduct = async (req, res) => {
   try {
-    const updated = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const images = req.files ? req.files.map(file => `/uploads/${file.filename}`) : [];
+    const updatedData = {
+      ...req.body,
+    };
+
+    if (images.length > 0) {
+      updatedData.images = images;
+    }
+
+    const updated = await Product.findByIdAndUpdate(req.params.id, updatedData, { new: true });
     if (!updated) return res.status(404).json({ message: 'Produit non trouvé' });
     res.status(200).json(updated);
   } catch (err) {

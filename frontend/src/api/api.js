@@ -9,13 +9,14 @@ export const register = (data) =>
 export const getProducts = () =>
   axios.get('http://localhost:5002/api/products'); // URL correcte pour récupérer les produits
 
-export const createProduct = (data, token) =>
-  axios.post('http://localhost:5002/api/products', data, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+export const createProduct = (formData) => {
+  return axios.post('http://localhost:5002/api/products', formData);
+};
 
-export const updateProduct = (id, data) =>
-  axios.put(`http://localhost:5002/api/products/${id}`, data);
+export const updateProduct = (id, data, isFormData = false) =>
+  axios.put(`http://localhost:5002/api/products/${id}`, data, {
+    headers: isFormData ? { 'Content-Type': 'multipart/form-data' } : {}
+  });
 
 export const deleteProduct = (id) =>
   axios.delete(`http://localhost:5002/api/products/${id}`);

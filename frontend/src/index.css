@@ -1,13 +1,58 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.product-card {
+  transition: transform 0.25s cubic-bezier(.4,2,.6,1), box-shadow 0.25s;
+  border-radius: 18px;
+  overflow: hidden;
+  border: none;
+  box-shadow: 0 2px 16px rgba(60,60,60,0.08);
+  background: #fff;
+}
+.product-card:hover {
+  transform: scale(1.045);
+  box-shadow: 0 8px 32px rgba(60,60,60,0.18);
+  z-index: 2;
+}
+.card-img-top {
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+  object-fit: cover;
+  height: 210px;
+}
+.card-footer {
+  background: #f8f9fa !important;
+  border-top: none !important;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* Modern navbar style */
+.modern-navbar {
+  background: #fff;
+  border-bottom: 1px solid #eaeaea;
+}
+.modern-navbar .nav-link {
+  color: #333 !important;
+  font-weight: 500;
+  transition: color 0.2s, background 0.2s;
+  border-radius: 8px;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+}
+.modern-navbar .nav-link:hover,
+.modern-navbar .nav-link.active {
+  color: #1976d2 !important;
+  background: #f0f6ff;
+}
+.navbar-brand {
+  letter-spacing: 1px;
+}
+@media (max-width: 991.98px) {
+  .modern-navbar .navbar-nav {
+    background: #fff;
+    border-radius: 12px;
+    padding: 12px 0;
+    margin-top: 8px;
+  }
+  .modern-navbar .d-flex {
+    width: 100%;
+    justify-content: flex-end;
+  }
 }

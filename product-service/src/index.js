@@ -1,40 +1,46 @@
-// filepath: c:\Users\pc\Desktop\microservices-app-e-commerce\product-service\src\index.js
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors'); // Import du middleware CORS
+const cors = require('cors');
+const path = require('path');
 const { connectRabbitMQ } = require('./rabbitmq');
-const productRoutes = require('./Routes/productRoutes');
+const productRoutes = require('./Routes/productRoutes'); // Assurez-vous que ce chemin est correct
+require('dotenv').config(); // Pour charger MONGO_URI depuis un fichier .env
+
 const app = express();
 
 // Middleware
-app.use(cors()); // Active CORS pour toutes les origines
+app.use(cors());
 app.use(express.json());
 
-// Connexion à MongoDB
+// Connexion MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   serverSelectionTimeoutMS: 5000,
-  maxPoolSize: 10
+  maxPoolSize: 10,
 })
   .then(() => console.log("✅ [product-service] Connecté à MongoDB"))
   .catch(err => console.error("❌ MongoDB connection error:", err));
 
-// Connexion à RabbitMQ
+// Connexion RabbitMQ
 connectRabbitMQ();
 
-// Enregistrement des routes
+// Routes
 app.use('/api/products', productRoutes);
 
-// Gestion des erreurs pour les routes non définies
+// Servir les images statiques
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// 404 - Not Found
 app.use((req, res, next) => {
   res.status(404).json({ message: 'Route non trouvée' });
 });
 
-// Gestion des erreurs globales
+// Erreur serveur
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Erreur serveur' });
 });
 
+// Lancement du serveur
 const PORT = process.env.PORT || 5002;
 app.listen(PORT, () => {
   console.log(`🚀 [product-service] en écoute sur le port ${PORT}`);

@@ -39,6 +39,8 @@ services:
     depends_on:
       - mongodb
       - rabbitmq
+    volumes:
+       - ./product-service/uploads:/app/uploads
 
   order-service:
     build: ./order-service
