@@ -2,11 +2,12 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'Node18' // Assure-toi d’avoir ce nom dans "Global Tool Configuration"
+        nodejs 'Node18'       // Nom dans Jenkins Global Tool Configuration
+        sonarQubeScanner 'SonarScanner'  // Nom du scanner SonarQube installé dans Jenkins
     }
 
     environment {
-        SONARQUBE_SERVER = 'SonarQube' // Nom du serveur Sonar dans Jenkins
+        SONARQUBE_SERVER = 'SonarQube'  // Nom du serveur SonarQube configuré dans Jenkins
     }
 
     stages {
@@ -28,6 +29,8 @@ pipeline {
                             if (svc == 'frontend') {
                                 echo "⚙️ Build du frontend"
                                 sh 'npm run build'
+                                echo "🧪 Génération du rapport de couverture frontend"
+                                sh 'npm run test -- --coverage' // ou ta commande coverage
                             }
                         }
                     }
@@ -37,22 +40,9 @@ pipeline {
 
         stage('Analyse SonarQube') {
             steps {
-                script {
-                    def services = ['auth-service', 'order-service', 'product-service', 'frontend']
-                    services.each { svc ->
-                        dir(svc) {
-                            echo "🔍 Analyse SonarQube pour ${svc}"
-                            withSonarQubeEnv("${SONARQUBE_SERVER}") {
-                                sh """
-                                    sonar-scanner \
-                                      -Dsonar.projectKey=${svc} \
-                                      -Dsonar.projectName=${svc} \
-                                      -Dsonar.sources=. \
-                                      -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info || true
-                                """
-                            }
-                        }
-                    }
+                echo "🔍 Analyse SonarQube globale du projet"
+                withSonarQubeEnv("${SONARQUBE_SERVER}") {
+                    sh 'sonar-scanner'
                 }
             }
         }
