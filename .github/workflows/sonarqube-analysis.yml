@@ -15,8 +15,10 @@ jobs:
     defaults:
       run:
         working-directory: ${{ matrix.service }}
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -26,15 +28,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install SonarScanner
+      - name: Install SonarScanner globally
         run: npm install -g sonar-scanner
 
-      - name: Run SonarQube scan
+      - name: Run SonarQube Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           sonar-scanner \
             -Dsonar.projectKey=${{ matrix.service }} \
             -Dsonar.sources=. \
-            -Dsonar.host.url=http://localhost:9000 \
+            -Dsonar.host.url=$SONAR_HOST_URL \
             -Dsonar.login=$SONAR_TOKEN
