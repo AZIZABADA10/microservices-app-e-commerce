@@ -1,13 +1,15 @@
-name: SonarQube Multi-Service Analysis
+name: Analyse SonarCloud Multi-services
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
-  sonarqube-analysis:
+  sonarcloud:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -28,19 +30,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install SonarScanner globally
+      - name: Install SonarScanner
         run: npm install -g sonar-scanner
 
-      - name: Debug Sonar URL
-        run: echo "SONAR_HOST_URL is: ${{ secrets.SONAR_HOST_URL }}"
-
-      - name: Run SonarQube Scan
+      - name: Run SonarCloud Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           sonar-scanner \
-            -Dsonar.projectKey=${{ matrix.service }} \
-            -Dsonar.sources=. \
-            -Dsonar.host.url=$SONAR_HOST_URL \
             -Dsonar.login=$SONAR_TOKEN
