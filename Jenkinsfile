@@ -1,8 +1,12 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs 'Node18' // Assure-toi d’avoir ce nom dans "Global Tool Configuration"
+    }
+
     environment {
-        SONARQUBE_SERVER = 'SonarQube' // Nom du serveur SonarQube dans Jenkins
+        SONARQUBE_SERVER = 'SonarQube' // Nom du serveur Sonar dans Jenkins
     }
 
     stages {
@@ -18,9 +22,11 @@ pipeline {
                     def services = ['auth-service', 'order-service', 'product-service', 'frontend']
                     services.each { svc ->
                         dir(svc) {
-                            // Utilise NodeJS s'il est installé sur le système Jenkins
+                            echo "📦 Installation des dépendances pour ${svc}"
                             sh 'npm install'
+
                             if (svc == 'frontend') {
+                                echo "⚙️ Build du frontend"
                                 sh 'npm run build'
                             }
                         }
@@ -29,24 +35,21 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
+        stage('Analyse SonarQube') {
             steps {
                 script {
                     def services = ['auth-service', 'order-service', 'product-service', 'frontend']
                     services.each { svc ->
                         dir(svc) {
+                            echo "🔍 Analyse SonarQube pour ${svc}"
                             withSonarQubeEnv("${SONARQUBE_SERVER}") {
-                                sh '''
-                                    if [ -f "sonar-project.properties" ]; then
-                                      sonar-scanner
-                                    else
-                                      sonar-scanner \
-                                        -Dsonar.projectKey=''' + svc + ''' \
-                                        -Dsonar.projectName=''' + svc + ''' \
-                                        -Dsonar.sources=. \
-                                        -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info || true
-                                    fi
-                                '''
+                                sh """
+                                    sonar-scanner \
+                                      -Dsonar.projectKey=${svc} \
+                                      -Dsonar.projectName=${svc} \
+                                      -Dsonar.sources=. \
+                                      -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info || true
+                                """
                             }
                         }
                     }
@@ -57,10 +60,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ Analyse Sonar réussie'
+            echo '✅ Pipeline réussie !'
         }
         failure {
-            echo '❌ Échec de la pipeline'
+            echo '❌ La pipeline a échoué !'
         }
     }
 }
