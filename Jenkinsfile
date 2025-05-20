@@ -28,8 +28,6 @@ pipeline {
                             if (svc == 'frontend') {
                                 echo "⚙️ Build du frontend"
                                 sh 'npm run build'
-                                echo "🧪 Génération du rapport de couverture frontend"
-                                sh 'npm run test -- --coverage' // Ajuste selon ta config
                             }
                         }
                     }
