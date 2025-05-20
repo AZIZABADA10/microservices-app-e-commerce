@@ -2,8 +2,7 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'Node18'       // Nom dans Jenkins Global Tool Configuration
-        sonarQubeScanner 'SonarScanner'  // Nom du scanner SonarQube installé dans Jenkins
+        nodejs 'Node18'  // Nom dans Jenkins Global Tool Configuration
     }
 
     environment {
@@ -30,7 +29,7 @@ pipeline {
                                 echo "⚙️ Build du frontend"
                                 sh 'npm run build'
                                 echo "🧪 Génération du rapport de couverture frontend"
-                                sh 'npm run test -- --coverage' // ou ta commande coverage
+                                sh 'npm run test -- --coverage' // Ajuste selon ta config
                             }
                         }
                     }
