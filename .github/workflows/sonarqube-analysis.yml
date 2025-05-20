@@ -1,9 +1,17 @@
+name: SonarQube Multi-Service Analysis
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
 jobs:
   sonarqube-analysis:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [auth-service, order-service, product-service, frontend] 
+        service: [auth-service, order-service, product-service, frontend]
     defaults:
       run:
         working-directory: ${{ matrix.service }}
