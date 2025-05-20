@@ -1,42 +1,25 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:18'   // Image officielle Node.js avec npm
-            args '-v /var/jenkins_home/.npm:/root/.npm' // (optionnel, cache npm)
-        }
-    }
+    agent any
 
     tools {
-        sonarQube 'SonarScanner' 
+        maven 'Maven3' // remplace par le nom exact que tu as configuré dans Jenkins
+    }
+
+    environment {
+        SONAR_SCANNER_HOME = tool 'SonarScanner' // optionnel si tu veux accéder à $SONAR_SCANNER_HOME
     }
 
     stages {
-        stage('Checkout') {
+        stage('Build') {
             steps {
-                git 'https://github.com/AZIZABADA10/microservices-app-e-commerce.git'
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                dir('frontend') {
-                    sh 'npm install'
-                }
+                sh 'mvn clean install'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh 'sonar-scanner'
-                }
-            }
-        }
-
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 1, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
+                    sh 'mvn sonar:sonar'
                 }
             }
         }
