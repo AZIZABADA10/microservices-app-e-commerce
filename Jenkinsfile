@@ -1,44 +1,26 @@
 pipeline {
-    agent any                             // utilise l’agent Jenkins par défaut
+    agent any
 
-    /* ==== OUTILS ==== */
-    tools {
-        // ↳ Nom EXACT saisi dans Manage Jenkins ▸ Global Tool Configuration
-        nodejs        'Node18'           // NodeJS 18.x (ou le nom que tu as choisi)
-        sonarRunner   'SonarScanner'     // CLI Sonar Scanner installée dans Jenkins
-    }
-
-    /* ==== VARIABLES GLOBALES ==== */
     environment {
-        // ↳ Nom EXACT du serveur SonarQube déclaré dans Manage Jenkins ▸ Configure System
-        SONAR_SERVER = 'SonarQube'
+        SONARQUBE_SERVER = 'SonarQube' // Nom du serveur SonarQube dans Jenkins
     }
 
-    /* ==== PIPELINE ==== */
     stages {
-
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/AZIZABADA10/microservices-app-e-commerce.git',
-                    branch: 'main'
+                git url: 'https://github.com/AZIZABADA10/microservices-app-e-commerce.git', branch: 'main'
             }
         }
 
         stage('Install & Build') {
             steps {
                 script {
-                    /* Liste des services – ajoute/enlève au besoin */
-                    def services = [
-                        'auth-service',
-                        'order-service',
-                        'product-service',
-                        'frontend'
-                    ]
-
+                    def services = ['auth-service', 'order-service', 'product-service', 'frontend']
                     services.each { svc ->
                         dir(svc) {
-                            sh 'npm ci'                // installe les dépendances
-                            if (svc == 'frontend') {   // build React uniquement
+                            // Utilise NodeJS s'il est installé sur le système Jenkins
+                            sh 'npm install'
+                            if (svc == 'frontend') {
                                 sh 'npm run build'
                             }
                         }
@@ -50,23 +32,21 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    def services = [
-                        'auth-service',
-                        'order-service',
-                        'product-service',
-                        'frontend'
-                    ]
-
+                    def services = ['auth-service', 'order-service', 'product-service', 'frontend']
                     services.each { svc ->
                         dir(svc) {
-                            withSonarQubeEnv("${SONAR_SERVER}") {
-                                sh """
-                                    ${SONAR_SCANNER_HOME}/bin/sonar-scanner \\
-                                      -Dsonar.projectKey=${svc} \\
-                                      -Dsonar.projectName=${svc} \\
-                                      -Dsonar.sources=. \\
-                                      -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info || true
-                                """
+                            withSonarQubeEnv("${SONARQUBE_SERVER}") {
+                                sh '''
+                                    if [ -f "sonar-project.properties" ]; then
+                                      sonar-scanner
+                                    else
+                                      sonar-scanner \
+                                        -Dsonar.projectKey=''' + svc + ''' \
+                                        -Dsonar.projectName=''' + svc + ''' \
+                                        -Dsonar.sources=. \
+                                        -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info || true
+                                    fi
+                                '''
                             }
                         }
                     }
@@ -75,9 +55,12 @@ pipeline {
         }
     }
 
-    /* ==== POST BUILD ==== */
     post {
-        success { echo '✅ Pipeline terminé avec succès' }
-        failure { echo '❌ Le pipeline a échoué' }
+        success {
+            echo '✅ Analyse Sonar réussie'
+        }
+        failure {
+            echo '❌ Échec de la pipeline'
+        }
     }
 }
