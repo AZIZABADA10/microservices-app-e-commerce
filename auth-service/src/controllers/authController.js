@@ -22,6 +22,10 @@ exports.register = [
   // Validation des entrées
   body('email').isEmail().withMessage('Email invalide'),
   body('password').isLength({ min: 6 }).withMessage('Le mot de passe doit contenir au moins 6 caractères'),
+  body('firstName').notEmpty().withMessage('Le prénom est requis'),
+  body('lastName').notEmpty().withMessage('Le nom est requis'),
+  body('dateOfBirth').isDate().withMessage('Date de naissance invalide'),
+  body('phone').notEmpty().withMessage('Le téléphone est requis'),
 
   async (req, res) => {
     const errors = validationResult(req);
@@ -30,15 +34,7 @@ exports.register = [
     }
 
     try {
-      const { email, password } = req.body;
-
-      // Vérification des données reçues (redondant mais plus clair)
-      if (!email) {
-        return res.status(400).json({ message: 'L\'adresse email est requise.' });
-      }
-      if (!password) {
-        return res.status(400).json({ message: 'Le mot de passe est requis.' });
-      }
+      const { email, password, firstName, lastName, dateOfBirth, phone } = req.body;
 
       // Vérification de l'existence de l'utilisateur
       const existing = await User.findOne({ email });
@@ -51,19 +47,33 @@ exports.register = [
       const hashedPassword = await bcrypt.hash(password, salt);
 
       // Création de l'utilisateur
-      const user = new User({ email, password: hashedPassword });
+      const user = new User({
+        firstName,
+        lastName,
+        email,
+        password: hashedPassword,
+        dateOfBirth,
+        phone
+      });
       await user.save();
 
       // Publication de l'événement RabbitMQ
       publishUserCreated({
         id: user._id,
         email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
         createdAt: new Date()
       });
 
       res.status(201).json({
         message: 'Inscription réussie.',
-        user: { id: user._id, email: user.email }
+        user: {
+          id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName
+        }
       });
 
     } catch (err) {
