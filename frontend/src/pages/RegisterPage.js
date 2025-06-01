@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { register } from '../api/api';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Swal from 'sweetalert2';
 
 function RegisterPage() {
   const [form, setForm] = useState({
@@ -17,10 +18,20 @@ function RegisterPage() {
   const handleRegister = async () => {
     try {
       await register(form);
-      alert('Inscription réussie ! Vous pouvez maintenant vous connecter.');
+      await Swal.fire({
+        icon: 'success',
+        title: 'Inscription réussie!',
+        text: 'Vous pouvez maintenant vous connecter',
+        confirmButtonColor: '#3085d6'
+      });
       navigate('/login');
     } catch (err) {
-      alert('Erreur : ' + (err.response?.data?.message || err.message));
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur d\'inscription',
+        text: err.response?.data?.message || 'Une erreur est survenue',
+        confirmButtonColor: '#d33'
+      });
     }
   };
 

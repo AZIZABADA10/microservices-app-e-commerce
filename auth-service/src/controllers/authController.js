@@ -104,12 +104,12 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
     }
 
-    // Générer le token avec plus d'informations
+    // Générer le token avec le rôle
     const token = jwt.sign(
       { 
         id: user._id,
         email: user.email,
-        role: user.role,
+        role: user.role, // Important : inclure le rôle dans le token
         firstName: user.firstName,
         lastName: user.lastName
       },
@@ -117,7 +117,6 @@ exports.login = async (req, res) => {
       { expiresIn: '24h' }
     );
 
-    // Renvoyer plus d'informations sur l'utilisateur
     res.json({
       token,
       user: {
@@ -125,7 +124,7 @@ exports.login = async (req, res) => {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        role: user.role,
+        role: user.role, // Important : renvoyer le rôle
         phone: user.phone
       }
     });

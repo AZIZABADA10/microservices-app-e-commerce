@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { login } from '../api/api';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 
 function LoginPage() {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -9,12 +11,26 @@ function LoginPage() {
 
   const handleLogin = async () => {
     try {
-      const res = await login(form);
-      localStorage.setItem('token', res.data.token);
-      alert('Connexion réussie');
+      const response = await login(form);
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      
+      await Swal.fire({
+        icon: 'success',
+        title: 'Connexion réussie!',
+        text: 'Vous êtes maintenant connecté',
+        showConfirmButton: false,
+        timer: 1500
+      });
+      
       navigate('/');
+      window.location.reload();
     } catch (err) {
-      alert('Erreur : ' + (err.response?.data?.message || err.message));
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur de connexion',
+        text: err.response?.data?.message || 'Une erreur est survenue'
+      });
     }
   };
 

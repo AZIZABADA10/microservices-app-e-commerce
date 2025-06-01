@@ -3,6 +3,7 @@ import { getProducts, createProduct, updateProduct, deleteProduct } from '../api
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Swal from 'sweetalert2';
 
 const ManageProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -26,7 +27,11 @@ const ManageProductsPage = () => {
 
   const handleCreateOrUpdate = async () => {
     if (!form.name || !form.price || !form.description || !form.stockQuantity || !form.category) {
-      toast.error('Veuillez remplir tous les champs');
+      await Swal.fire({
+        icon: 'warning',
+        title: 'Attention',
+        text: 'Veuillez remplir tous les champs'
+      });
       return;
     }
     try {
@@ -36,10 +41,20 @@ const ManageProductsPage = () => {
 
       if (editingProductId) {
         await updateProduct(editingProductId, formData, true);
-        toast.success('Produit mis à jour avec succès');
+        await Swal.fire({
+          icon: 'success',
+          title: 'Produit mis à jour!',
+          showConfirmButton: false,
+          timer: 1500
+        });
       } else {
         await createProduct(formData); // Correct
-        toast.success('Produit créé avec succès');
+        await Swal.fire({
+          icon: 'success',
+          title: 'Produit créé!',
+          showConfirmButton: false,
+          timer: 1500
+        });
       }
 
       resetForm();
@@ -47,7 +62,11 @@ const ManageProductsPage = () => {
       setShowModal(false);
     } catch (error) {
       console.log(error); // Ajoute ceci pour voir l'erreur dans la console
-      toast.error('Une erreur s\'est produite');
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur',
+        text: 'Une erreur s\'est produite'
+      });
     }
   };
 
@@ -65,13 +84,34 @@ const ManageProductsPage = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
+    const result = await Swal.fire({
+      title: 'Êtes-vous sûr?',
+      text: "Cette action est irréversible!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Oui, supprimer',
+      cancelButtonText: 'Annuler'
+    });
+
+    if (result.isConfirmed) {
       try {
         await deleteProduct(id);
-        toast.info('Produit supprimé avec succès');
+        await Swal.fire({
+          icon: 'success',
+          title: 'Supprimé!',
+          text: 'Le produit a été supprimé',
+          showConfirmButton: false,
+          timer: 1500
+        });
         fetchProducts();
       } catch {
-        toast.error('Erreur lors de la suppression');
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Erreur lors de la suppression'
+        });
       }
     }
   };

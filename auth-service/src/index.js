@@ -21,6 +21,7 @@ const connectWithRetry = async () => {
     console.log("✅ [auth-service] Connecté à MongoDB");
   } catch (err) {
     console.error("❌ MongoDB connection error:", err.message);
+    console.log("Tentative de reconnexion dans 5 secondes...");
     setTimeout(connectWithRetry, 5000);
   }
 };

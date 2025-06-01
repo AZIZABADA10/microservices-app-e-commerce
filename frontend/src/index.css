@@ -26,6 +26,8 @@
 .modern-navbar {
   background: #fff;
   border-bottom: 1px solid #eaeaea;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  padding: 0.5rem 1rem;
 }
 .modern-navbar .nav-link {
   color: #333 !important;
@@ -35,14 +37,26 @@
   margin-right: 8px;
   display: flex;
   align-items: center;
+  padding: 0.5rem 1rem;
 }
 .modern-navbar .nav-link:hover,
 .modern-navbar .nav-link.active {
-  color: #1976d2 !important;
-  background: #f0f6ff;
+  color: #007bff;
+  background-color: #f8f9fa;
+  border-radius: 4px;
 }
-.navbar-brand {
-  letter-spacing: 1px;
+.modern-navbar .navbar-toggler {
+  border: none;
+  padding: 0.25rem 0.75rem;
+}
+.modern-navbar .navbar-toggler:focus {
+  box-shadow: none;
+  outline: none;
+}
+.nav-btns {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 @media (max-width: 991.98px) {
   .modern-navbar .navbar-nav {
@@ -54,5 +68,20 @@
   .modern-navbar .d-flex {
     width: 100%;
     justify-content: flex-end;
+  }
+  .modern-navbar .navbar-collapse {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  .modern-navbar .nav-btns {
+    margin-top: 1rem;
+    justify-content: center;
+  }
+  .modern-navbar .navbar-nav .nav-link {
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
   }
 }

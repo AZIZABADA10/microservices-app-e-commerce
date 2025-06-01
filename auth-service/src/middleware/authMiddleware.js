@@ -26,15 +26,21 @@ exports.protect = async (req, res, next) => {
 
 exports.adminOnly = async (req, res, next) => {
   try {
-    // Vérifier si l'utilisateur est défini
+    console.log('User in request:', req.user); // Débogage
+    
     if (!req.user) {
       return res.status(401).json({ message: 'Non authentifié' });
     }
 
     // Vérifier si l'utilisateur est admin
     const user = await User.findById(req.user.id);
+    console.log('User from DB:', user); // Débogage
+    
     if (!user || user.role !== 'ADMIN') {
-      return res.status(403).json({ message: 'Accès réservé aux administrateurs' });
+      return res.status(403).json({ 
+        message: 'Accès réservé aux administrateurs',
+        currentRole: user?.role 
+      });
     }
 
     next();

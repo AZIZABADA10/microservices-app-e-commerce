@@ -60,21 +60,21 @@ exports.login = async (req, res) => {
 // routes/authRoutes.js
 const express = require('express');
 const router = express.Router();
+const { protect, adminOnly } = require('../middleware/authMiddleware');
+const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
 
+// Routes d'authentification
 router.post('/register', authController.register);
 router.post('/login', authController.login);
-const { protect, adminOnly } = require('../middleware/authMiddleware');
-const { getAllUsers, updateUserRole, deleteUser } = require('../controllers/userController');
-const { getUserProfile, updateUserProfile } = require('../controllers/authController');
 
-// Routes pour le profil utilisateur
-router.get('/profile', protect, getUserProfile);
-router.put('/profile', protect, updateUserProfile);
+// Routes profil utilisateur
+router.get('/profile', protect, authController.getUserProfile);
+router.put('/profile', protect, authController.updateUserProfile);
 
 // Routes admin pour la gestion des utilisateurs
-router.get('/admin/users', protect, adminOnly, getAllUsers);
-router.put('/admin/users/:userId/role', protect, adminOnly, updateUserRole);
-router.delete('/admin/users/:userId', protect, adminOnly, deleteUser);
+router.get('/users', protect, adminOnly, userController.getAllUsers);
+router.put('/users/:userId/role', protect, adminOnly, userController.updateUserRole);
+router.delete('/users/:userId', protect, adminOnly, userController.deleteUser);
 
 module.exports = router;

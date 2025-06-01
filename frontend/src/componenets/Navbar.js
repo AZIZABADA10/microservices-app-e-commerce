@@ -12,7 +12,8 @@ function Navbar() {
   };
 
   const isLoggedIn = !!localStorage.getItem('token');
-  const userRole = localStorage.getItem('userRole');
+  const user = JSON.parse(localStorage.getItem('user'));
+  const isAdmin = user?.role === 'ADMIN';
 
   const isActive = (path) => location.pathname === path;
 
@@ -38,29 +39,32 @@ function Navbar() {
                   <i className="bi bi-bag me-1"></i>Produits
                 </Link>
               </li>
-              <li className="nav-item">
-                <Link className={`nav-link${isActive('/orders') ? ' active' : ''}`} to="/orders">
-                  <i className="bi bi-card-checklist me-1"></i>Commandes
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className={`nav-link${isActive('/manage-products') ? ' active' : ''}`} to="/manage-products">
-                  <i className="bi bi-gear me-1"></i>Gérer les Produits
-                </Link>
-              </li>
               {isLoggedIn && (
                 <>
                   <li className="nav-item">
-                    <Link className="nav-link" to="/profile">
-                      <i className="bi bi-person"></i> Profil
+                    <Link className={`nav-link${isActive('/orders') ? ' active' : ''}`} to="/orders">
+                      <i className="bi bi-card-checklist me-1"></i>Commandes
                     </Link>
                   </li>
-                  {userRole === 'ADMIN' && (
+                  <li className="nav-item">
+                    <Link className={`nav-link${isActive('/profile') ? ' active' : ''}`} to="/profile">
+                      <i className="bi bi-person me-1"></i>Profil
+                    </Link>
+                  </li>
+                  {isAdmin && (
+                    <>
                     <li className="nav-item">
                       <Link className="nav-link" to="/admin/users">
                         <i className="bi bi-people"></i> Gestion Utilisateurs
                       </Link>
                     </li>
+                    <li className="nav-item">
+                      <Link className="nav-link" to="/manage-products">
+                        <i className="bi bi-box"></i> Gestion des Produits
+                      </Link>
+                    </li>
+
+                    </>
                   )}
                 </>
               )}
