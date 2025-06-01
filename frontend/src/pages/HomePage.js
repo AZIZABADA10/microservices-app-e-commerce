@@ -4,10 +4,9 @@ import { getProducts } from '../api/api';
 import './HomePage.css'; 
 
 const initialReviews = [
-  { name: "Aziz", comment: "Super service et livraison rapide !", date: "2025-05-15", rating: 5 },
+  { name: "Mohamed", comment: "Super service et livraison rapide !", date: "2025-05-15", rating: 5 },
   { name: "Younes", comment: "Produits de qualité, je recommande.", date: "2025-05-14", rating: 4 },
   { name: "Ismail", comment: "Bon rapport qualité/prix.", date: "2025-05-13", rating: 4 },
-  { name: "Mohamed", comment: "Bon qualité.", date: "2025-05-14", rating: 3 }
 
 ];
 

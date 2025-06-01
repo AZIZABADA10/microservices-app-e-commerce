@@ -26,7 +26,7 @@ exports.protect = async (req, res, next) => {
 
 exports.adminOnly = async (req, res, next) => {
   try {
-    console.log('User in request:', req.user); // Débogage
+    console.log('User in request:', req.user); 
     
     if (!req.user) {
       return res.status(401).json({ message: 'Non authentifié' });
@@ -34,7 +34,7 @@ exports.adminOnly = async (req, res, next) => {
 
     // Vérifier si l'utilisateur est admin
     const user = await User.findById(req.user.id);
-    console.log('User from DB:', user); // Débogage
+    console.log('User from DB:', user); 
     
     if (!user || user.role !== 'ADMIN') {
       return res.status(403).json({ 

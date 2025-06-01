@@ -12,7 +12,6 @@ Cette application e‑commerce en microservices est un projet académique visant
 * [Variables d’environnement](#variables-denvironnement)
 * [Endpoints API](#endpoints-api)
 * [Docker](#docker)
-* [Contribuer](#contribuer)
 * [Auteur](#auteur)
 
 ## Fonctionnalités

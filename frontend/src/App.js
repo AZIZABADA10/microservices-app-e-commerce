@@ -31,7 +31,6 @@ function App() {
     <BrowserRouter>
       <Navbar />
       <Routes>
-        {/* tout les route sont public au memont de development*/} 
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/" element={<HomePage />} />

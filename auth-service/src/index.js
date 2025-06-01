@@ -47,7 +47,7 @@ app.listen(PORT, () => {
   connectWithRetry(); // Start DB connection after server starts
 });
 
-// Graceful shutdown
+
 process.on('SIGTERM', () => {
   console.log('SIGTERM received. Shutting down gracefully...');
   mongoose.connection.close(false, () => {

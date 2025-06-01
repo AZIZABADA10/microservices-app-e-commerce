@@ -7,7 +7,7 @@ export const register = (data) =>
   axios.post('http://localhost:5001/api/auth/register', data);
 
 export const getProducts = () =>
-  axios.get('http://localhost:5002/api/products'); // URL correcte pour récupérer les produits
+  axios.get('http://localhost:5002/api/products'); 
 
 export const createProduct = (formData) => {
   return axios.post('http://localhost:5002/api/products', formData);

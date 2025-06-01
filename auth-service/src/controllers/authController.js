@@ -109,7 +109,7 @@ exports.login = async (req, res) => {
       { 
         id: user._id,
         email: user.email,
-        role: user.role, // Important : inclure le rôle dans le token
+        role: user.role, 
         firstName: user.firstName,
         lastName: user.lastName
       },
@@ -124,7 +124,7 @@ exports.login = async (req, res) => {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        role: user.role, // Important : renvoyer le rôle
+        role: user.role, 
         phone: user.phone
       }
     });

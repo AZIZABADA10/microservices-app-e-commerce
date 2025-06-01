@@ -12,7 +12,6 @@ async function connectRabbitMQ() {
     await channel.assertQueue("USER_REGISTERED");
   } catch (err) {
     console.error("❌ [auth-service] RabbitMQ connection error:", err);
-    // Tentative de reconnexion après un délai
     setTimeout(connectRabbitMQ, 5000);
   }
 }
