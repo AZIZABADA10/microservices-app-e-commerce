@@ -63,3 +63,9 @@ body, .container, .hero-section {
   border-top: 1px solid #eaeaea;
   background: #f8f9fa !important;
 }
+
+
+.hover-shadow:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
