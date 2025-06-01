@@ -19,6 +19,7 @@ function LoginPage() {
   };
 
   return (
+    <div className="container py-4">
     <div className="container py-5">
       <div className="row justify-content-center">
         <div className="col-md-6 col-lg-4">
@@ -57,6 +58,7 @@ function LoginPage() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

@@ -64,5 +64,17 @@ const authController = require('../controllers/authController');
 
 router.post('/register', authController.register);
 router.post('/login', authController.login);
+const { protect, adminOnly } = require('../middleware/authMiddleware');
+const { getAllUsers, updateUserRole, deleteUser } = require('../controllers/userController');
+const { getUserProfile, updateUserProfile } = require('../controllers/authController');
+
+// Routes pour le profil utilisateur
+router.get('/profile', protect, getUserProfile);
+router.put('/profile', protect, updateUserProfile);
+
+// Routes admin pour la gestion des utilisateurs
+router.get('/admin/users', protect, adminOnly, getAllUsers);
+router.put('/admin/users/:userId/role', protect, adminOnly, updateUserRole);
+router.delete('/admin/users/:userId', protect, adminOnly, deleteUser);
 
 module.exports = router;

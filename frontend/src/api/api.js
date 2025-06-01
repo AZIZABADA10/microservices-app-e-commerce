@@ -34,3 +34,38 @@ export const updateOrder = (id, data) =>
 
 export const deleteOrder = (id) =>
   axios.delete(`http://localhost:5003/api/orders/${id}`);
+
+export const getUserProfile = () => {
+  const token = localStorage.getItem('token');
+  return axios.get('http://localhost:5001/api/users/profile', {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+};
+
+export const updateUserProfile = (data) => {
+  const token = localStorage.getItem('token');
+  return axios.put('http://localhost:5001/api/users/profile', data, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+};
+
+export const getAllUsers = () => {
+  const token = localStorage.getItem('token');
+  return axios.get('http://localhost:5001/api/users/admin/users', {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+};
+
+export const updateUserRole = (userId, data) => {
+  const token = localStorage.getItem('token');
+  return axios.put(`http://localhost:5001/api/users/admin/users/${userId}/role`, data, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+};
+
+export const deleteUser = (userId) => {
+  const token = localStorage.getItem('token');
+  return axios.delete(`http://localhost:5001/api/users/admin/users/${userId}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+};

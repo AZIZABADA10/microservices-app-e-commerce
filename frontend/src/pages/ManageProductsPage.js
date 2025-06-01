@@ -84,6 +84,7 @@ const ManageProductsPage = () => {
 
   return (
     <div className="container py-4">
+    <div className="container py-4">
       <h1 className="text-center text-primary mb-5 fw-bold">Gestion des Produits</h1>
 
       {/* === Ajouter Produit Card === */}
@@ -118,7 +119,7 @@ const ManageProductsPage = () => {
           </div>
         </div>
       </div>
-
+</div>
       {/* === Table Produits === */}
       <div className="table-responsive shadow-sm">
         <table className="table table-hover align-middle shadow rounded-4 overflow-hidden" style={{ background: "#fff" }}>
