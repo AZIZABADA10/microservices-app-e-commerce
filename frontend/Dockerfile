@@ -1,21 +1,25 @@
-# Étape 1 : construire l'application React
-FROM node:20-alpine as build
+# Use node image for both build and serve
+FROM node:20-alpine
 
 WORKDIR /app
 
+# Copy package files
 COPY package*.json ./
 
-RUN npm install
+# Install dependencies
+RUN npm ci
 
+# Copy source code
 COPY . .
 
+# Build the app
 RUN npm run build
 
-# Étape 2 : servir l'application avec nginx
-FROM nginx:alpine
+# Install serve to run the application
+RUN npm install -g serve
 
-COPY --from=build /app/build /usr/share/nginx/html
+# Expose port 3000
+EXPOSE 3000
 
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+# Start the app
+CMD ["serve", "-s", "build", "-l", "3000"]

@@ -69,3 +69,31 @@ export const deleteUser = (userId) => {
     headers: { Authorization: `Bearer ${token}` }
   });
 };
+
+const CART_SERVICE_URL = 'http://localhost:5004';
+
+export const addToCart = (cartData) => {
+  return axios.post(`${CART_SERVICE_URL}/api/cart/add`, cartData);
+};
+
+export const getCart = (userId) => {
+    const token = localStorage.getItem('token');
+    return axios.get(`${CART_SERVICE_URL}/api/cart/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+};
+
+export const updateCartItem = (userId, productId, quantity) => {
+    const token = localStorage.getItem('token');
+    return axios.put(`${CART_SERVICE_URL}/api/cart/${userId}/items/${productId}`, 
+        { quantity },
+        { headers: { Authorization: `Bearer ${token}` }}
+    );
+};
+
+export const removeFromCart = (userId, productId) => {
+    const token = localStorage.getItem('token');
+    return axios.delete(`${CART_SERVICE_URL}/api/cart/${userId}/items/${productId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+};

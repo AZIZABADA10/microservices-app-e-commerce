@@ -53,11 +53,26 @@ services:
       - mongodb
       - rabbitmq
 
+  cart-service:
+    build: ./cart-service
+    ports:
+      - "5004:5004"
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/cart-service
+      - JWT_SECRET=secret_token
+      - RABBITMQ_URL=amqp://admin:password@rabbitmq:5672
+    depends_on:
+      - mongodb
+      - rabbitmq
+
   frontend:
     build: ./frontend
     ports:
-      - "3000:80"
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
     depends_on:
-      - auth-service
       - product-service
+      - cart-service
       - order-service
+

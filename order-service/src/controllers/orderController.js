@@ -4,21 +4,29 @@ const { publishOrderCreated } = require('../rabbitmq'); // Import de la fonction
 // POST /orders
 exports.createOrder = async (req, res) => {
   try {
-    const { productId, quantity } = req.body;
+    const { items, total, payment, status } = req.body;
 
     // Validation des données
-    if (!productId || !quantity) {
-      return res.status(400).json({ message: 'Produit et quantité requis.' });
+    if (!items || !total || !payment || !status) {
+      return res.status(400).json({ message: 'Champs requis manquants.' });
     }
 
     // Création de la commande
     const newOrder = new Order({
-      productId,
-      quantity,
-      status: 'pending'
+      items,
+      total,
+      payment: {
+        cardNumber: payment.cardNumber.slice(-4), // Stocker uniquement les 4 derniers chiffres
+        paymentStatus: 'completed'
+      },
+      status
     });
 
     const savedOrder = await newOrder.save();
+    
+    // Publier l'événement de création de commande
+    publishOrderCreated(savedOrder);
+    
     res.status(201).json(savedOrder);
   } catch (err) {
     console.error('Erreur lors de la création de la commande:', err);

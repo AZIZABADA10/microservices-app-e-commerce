@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from 'react-bootstrap';
-import { getProducts } from '../api/api';
+import { getProducts, addToCart } from '../api/api';
 import { ToastContainer, toast } from 'react-toastify';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
@@ -57,9 +57,20 @@ const ProductsPage = () => {
     setShowModal(true);
   };
 
-  const handleAddToCart = (product) => {
-    // À implémenter plus tard avec le service de panier
-    toast.info("Fonctionnalité panier à venir !");
+  const handleAddToCart = async (product) => {
+    try {
+      await addToCart({
+        userId: "user123", // À remplacer par l'ID réel de l'utilisateur
+        productId: product._id,
+        quantity: 1,
+        price: product.price,
+        name: product.name,
+        image: product.images?.[0]
+      });
+      toast.success("Produit ajouté au panier!");
+    } catch (error) {
+      toast.error("Erreur lors de l'ajout au panier");
+    }
   };
 
   return (
