@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { getProducts, createOrder } from '../api/api';
+import React, { useState, useEffect } from 'react';
+import { Modal } from 'react-bootstrap';
+import { getProducts } from '../api/api';
 import { ToastContainer, toast } from 'react-toastify';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
@@ -10,6 +11,8 @@ const ProductsPage = () => {
   const [categories, setCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [showModal, setShowModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -49,14 +52,14 @@ const ProductsPage = () => {
     setFilteredProducts(result);
   }, [searchTerm, selectedCategory, products]);
 
-  const handleBuy = async (productId) => {
-    try {
-      const token = localStorage.getItem('token');
-      await createOrder({ productId, quantity: 1 }, token);
-      toast.success("Commande créée avec succès !");
-    } catch (err) {
-      toast.error("Impossible de créer la commande.");
-    }
+  const handleShowDetails = (product) => {
+    setSelectedProduct(product);
+    setShowModal(true);
+  };
+
+  const handleAddToCart = (product) => {
+    // À implémenter plus tard avec le service de panier
+    toast.info("Fonctionnalité panier à venir !");
   };
 
   return (
@@ -92,36 +95,48 @@ const ProductsPage = () => {
       </div>
 
       {/* Affichage des produits */}
-      <div className="row row-cols-1 row-cols-md-3 g-4">
+      <div className="row g-4">
         {filteredProducts.map((product) => (
-          <div className="col" key={product._id}>
+          <div className="col-md-4" key={product._id}>
             <div className="card h-100 product-card">
-              {console.log(product.images)}
-              {product.images?.[0] && (
+              <div className="position-relative">
                 <img
-                  src={`http://localhost:5002${product.images[0]}`}
+                  src={product.images?.[0] ? `http://localhost:5002${product.images[0]}` : '/placeholder.jpg'}
                   className="card-img-top"
                   alt={product.name}
-                  style={{ objectFit: 'cover', height: '200px' }}
+                  style={{ height: '200px', objectFit: 'cover' }}
                 />
-              )}
+                <div className="position-absolute top-0 end-0 p-2">
+                  <span className="badge bg-primary">{product.category}</span>
+                </div>
+              </div>
+              
               <div className="card-body">
-                <h5 className="card-title text-primary">{product.name}</h5>
-                <p className="card-text">{product.description}</p>
-                <p className="text-muted mb-1">Catégorie : <strong>{product.category}</strong></p>
+                <h5 className="card-title">{product.name}</h5>
+                <p className="card-text text-truncate">{product.description}</p>
                 <div className="d-flex justify-content-between align-items-center">
-                  <span className="fs-5 fw-bold text-success">{product.price} DH </span>
+                  <span className="fw-bold text-primary">{product.price} DH</span>
                   <span className="badge bg-secondary">Stock: {product.stockQuantity}</span>
                 </div>
               </div>
-              <div className="card-footer bg-white border-0">
-                <button
-                  className="btn btn-outline-primary w-100"
-                  onClick={() => handleBuy(product._id)}
-                  disabled={product.stockQuantity <= 0}
-                >
-                  {product.stockQuantity > 0 ? 'Acheter' : 'Rupture de stock'}
-                </button>
+              
+              <div className="card-footer bg-transparent border-top-0">
+                <div className="d-grid gap-2">
+                  <button 
+                    className="btn btn-outline-primary"
+                    onClick={() => handleShowDetails(product)}
+                  >
+                    <i className="bi bi-eye me-2"></i>Détails
+                  </button>
+                  <button 
+                    className="btn btn-primary"
+                    onClick={() => handleAddToCart(product)}
+                    disabled={product.stockQuantity <= 0}
+                  >
+                    <i className="bi bi-cart-plus me-2"></i>
+                    {product.stockQuantity > 0 ? 'Ajouter au panier' : 'Rupture de stock'}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -132,6 +147,43 @@ const ProductsPage = () => {
           </div>
         )}
       </div>
+
+      {/* Modal de détails */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>{selectedProduct?.name}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedProduct && (
+            <div className="row">
+              <div className="col-md-6">
+                <img
+                  src={selectedProduct.images?.[0] ? `http://localhost:5002${selectedProduct.images[0]}` : '/placeholder.jpg'}
+                  className="img-fluid rounded"
+                  alt={selectedProduct.name}
+                />
+              </div>
+              <div className="col-md-6">
+                <h4 className="mb-3">{selectedProduct.name}</h4>
+                <p className="text-muted mb-3">{selectedProduct.description}</p>
+                <div className="mb-3">
+                  <span className="badge bg-primary me-2">{selectedProduct.category}</span>
+                  <span className="badge bg-secondary">Stock: {selectedProduct.stockQuantity}</span>
+                </div>
+                <h5 className="text-primary mb-4">{selectedProduct.price} DH</h5>
+                <button
+                  className="btn btn-primary w-100"
+                  onClick={() => handleAddToCart(selectedProduct)}
+                  disabled={selectedProduct.stockQuantity <= 0}
+                >
+                  <i className="bi bi-cart-plus me-2"></i>
+                  {selectedProduct.stockQuantity > 0 ? 'Ajouter au panier' : 'Rupture de stock'}
+                </button>
+              </div>
+            </div>
+          )}
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };

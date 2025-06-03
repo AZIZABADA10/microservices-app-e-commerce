@@ -1,25 +1,24 @@
 .product-card {
-  transition: transform 0.25s cubic-bezier(.4,2,.6,1), box-shadow 0.25s;
-  border-radius: 18px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border-radius: 12px;
   overflow: hidden;
-  border: none;
-  box-shadow: 0 2px 16px rgba(60,60,60,0.08);
-  background: #fff;
 }
+
 .product-card:hover {
-  transform: scale(1.045);
-  box-shadow: 0 8px 32px rgba(60,60,60,0.18);
-  z-index: 2;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
-.card-img-top {
-  border-top-left-radius: 18px;
-  border-top-right-radius: 18px;
-  object-fit: cover;
-  height: 210px;
+
+.product-card .card-img-top {
+  transition: transform 0.3s ease-in-out;
 }
+
+.product-card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
 .card-footer {
-  background: #f8f9fa !important;
-  border-top: none !important;
+  background: transparent !important;
 }
 
 /* Modern navbar style */

@@ -14,11 +14,16 @@ app.use(express.json());
 
 // Connexion MongoDB
 mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
   serverSelectionTimeoutMS: 5000,
-  maxPoolSize: 10,
+  retryWrites: true,
 })
   .then(() => console.log("✅ [product-service] Connecté à MongoDB"))
-  .catch(err => console.error("❌ MongoDB connection error:", err));
+  .catch(err => {
+    console.error("❌ MongoDB connection error:", err);
+    process.exit(1);
+  });
 
 // Connexion RabbitMQ
 connectRabbitMQ();
